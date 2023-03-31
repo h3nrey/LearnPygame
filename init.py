@@ -21,8 +21,14 @@ skySurface = pygame.image.load("Assets/Graphics/Sky.png").convert();
 groundSurface = pygame.image.load("Assets/Graphics/ground.png").convert()
 scoreText = textFont.render('Score: 100', False, "red");
 
-snailSurface = pygame.image.load("Assets/Graphics/snail/snail1.png").convert_alpha()
+playerSurf = pygame.image.load("Assets/Graphics/Player/player_walk_1.png").convert_alpha();
+playerRect = playerSurf.get_rect(midbottom = (50, 300));
+ 
+snailSurf = pygame.image.load("Assets/Graphics/snail/snail1.png").convert_alpha()
+snailRect = snailSurf.get_rect(midbottom = (750, 300))
 snailPosX = 700
+
+# Game Loop
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -33,10 +39,19 @@ while True:
     screen.blit(groundSurface, (0,300));
     screen.blit(scoreText, (20, 10));
     
+    screen.blit(playerSurf, playerRect);
+
     snailSpeed = 7;
-    snailPosX -= snailSpeed;
-    if (snailPosX <= -20): snailPosX = 750;
-    screen.blit(snailSurface, (snailPosX, 265));
+    snailRect.left -= snailSpeed;
+    if (snailRect.left <= -100): snailRect.left = 750;
+    screen.blit(snailSurf, snailRect);
+
+    # if(playerRect.colliderect(snailRect)):
+    #     print("player touched snail")
+
+    mousePos = pygame.mouse.get_pos();
+    if(playerRect.collidepoint(mousePos)):
+        print("mouse hovering player")
 
     # Draw all elements
     pygame.display.update();
