@@ -3,8 +3,8 @@ from sys import exit
 pygame.init(); # initialize pygame
 
 # Screen setup
-width = 800;
-height = 400;
+width = 450;
+height = 450;
 screen = pygame.display.set_mode((width, height)) # Create a screen for one frame
 pygame.display.set_caption("Super runner cool"); #Defing a title for the game screen
 
@@ -12,13 +12,8 @@ pygame.display.set_caption("Super runner cool"); #Defing a title for the game sc
 clock = pygame.time.Clock();
 FPS = 60;
 
-# Fonts
-textFont = pygame.font.Font("font/Pixeltype.ttf", 30);
-
-# Surfaces
-skySurface = pygame.image.load("Assets/Graphics/Sky.png");
-groundSurface = pygame.image.load("Assets/Graphics/ground.png")
-scoreText = textFont.render('Score: 100', False, "red");
+testSurface = pygame.Surface((200, 100));
+testSurface.fill("pink");
 
 while True:
     for event in pygame.event.get():
@@ -26,9 +21,7 @@ while True:
             pygame.quit();
             exit(); # this is just a more acurate way of put a break here
     
-    screen.blit(skySurface, (0,0));
-    screen.blit(groundSurface, (0,300));
-    screen.blit(scoreText, (20, 10));
+    screen.blit(testSurface, (50,50));
 
     # Draw all elements
     # update everything
