@@ -12,14 +12,17 @@ pygame.display.set_caption("Super runner cool"); #Defing a title for the game sc
 clock = pygame.time.Clock();
 FPS = 60;
 
-# Fonts
+# FONTS
 textFont = pygame.font.Font("font/Pixeltype.ttf", 30);
 
-# Surfaces
-skySurface = pygame.image.load("Assets/Graphics/Sky.png");
-groundSurface = pygame.image.load("Assets/Graphics/ground.png")
+
+# SURFACES
+skySurface = pygame.image.load("Assets/Graphics/Sky.png").convert();
+groundSurface = pygame.image.load("Assets/Graphics/ground.png").convert()
 scoreText = textFont.render('Score: 100', False, "red");
 
+snailSurface = pygame.image.load("Assets/Graphics/snail/snail1.png").convert_alpha()
+snailPosX = 700
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -29,8 +32,13 @@ while True:
     screen.blit(skySurface, (0,0));
     screen.blit(groundSurface, (0,300));
     screen.blit(scoreText, (20, 10));
+    
+    snailSpeed = 7;
+    snailPosX -= snailSpeed;
+    if (snailPosX <= -20): snailPosX = 750;
+    screen.blit(snailSurface, (snailPosX, 265));
 
     # Draw all elements
-    # update everything
     pygame.display.update();
+    # update everything
     clock.tick(FPS);
