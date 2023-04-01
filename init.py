@@ -1,5 +1,14 @@
 import pygame
 from sys import exit
+
+def DisplayScore(startTime):
+    deltaTime = pygame.time.get_ticks() - startTime;
+    displayTime = int(deltaTime / 100);
+    font = pygame.font.Font("font/Pixeltype.ttf", 40);
+    scoreText = font.render(f"{displayTime}", False, "#ffaaaa");
+    scoreRect = scoreText.get_rect(center = (400, 50));
+    screen.blit(scoreText, scoreRect);
+
 pygame.init(); # initialize pygame
 
 # Screen setup
@@ -14,6 +23,7 @@ FPS = 60;
 
 # Game states
 gameActive = True;
+startTime = 0;
 
 # FONTS
 textFont = pygame.font.Font("font/Pixeltype.ttf", 40);
@@ -22,8 +32,6 @@ textFont = pygame.font.Font("font/Pixeltype.ttf", 40);
 # SURFACES
 skySurface = pygame.image.load("Assets/Graphics/Sky.png").convert();
 groundSurface = pygame.image.load("Assets/Graphics/ground.png").convert()
-scoreText = textFont.render('Score: 100', False, (80,80,80));
-scoreRect = scoreText.get_rect(center = (screen.get_width() / 2, 40))
 
 playerSurf = pygame.image.load("Assets/Graphics/Player/player_walk_1.png").convert_alpha();
 playerRect = playerSurf.get_rect(midbottom = (50, 300));
@@ -34,6 +42,7 @@ canJump = True;
 snailSurf = pygame.image.load("Assets/Graphics/snail/snail1.png").convert_alpha()
 snailRect = snailSurf.get_rect(midbottom = (750, 300))
 snailPosX = 700
+
 
 line = pygame.Surface((10,10))
 
@@ -60,10 +69,7 @@ while True:
     if(gameActive):
         screen.blit(skySurface, (0,0));
         screen.blit(groundSurface, (0,300));
-        pygame.draw.rect(screen, "#aaa1ed", scoreRect)
-        pygame.draw.rect(screen, "#aaa1ed", scoreRect, 10)
-        screen.blit(scoreText, scoreRect);
-        
+        DisplayScore(startTime);
 
         snailSpeed = 7;
         snailRect.left -= snailSpeed;
@@ -88,6 +94,7 @@ while True:
     else:
         screen.fill("Black")
         snailRect.left = 750;
+        startTime = pygame.time.get_ticks();
         print("Game finished")
 
     # Draw all elements
