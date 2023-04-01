@@ -1,5 +1,6 @@
 import pygame
 from sys import exit
+from random import randint
 
 def DisplayScore(startTime):
     deltaTime = pygame.time.get_ticks() - startTime;
@@ -9,6 +10,26 @@ def DisplayScore(startTime):
     scoreRect = scoreText.get_rect(center = (400, 50));
     screen.blit(scoreText, scoreRect);
     return displayTime;
+
+def MoveObstacles(obstacleList):
+    if(obstacleList):
+        for rect in obstacleList:
+            rect.x -= 5;
+            surf = snailSurf
+            if(rect.y < 250): surf = flySurf;
+
+            screen.blit(surf, rect);
+        
+        obstacleList = [rect for rect in obstacleList if rect.x > -100]
+        return obstacleList
+    else: return []
+
+def HandleCollision(player, obstacleList):
+    if(obstacleList):
+        for rect in obstacleList:
+            if player.colliderect(rect):
+                return False;
+    return True;
 
 pygame.init(); # initialize pygame
 
@@ -30,6 +51,10 @@ score = 0;
 # FONTS
 textFont = pygame.font.Font("font/Pixeltype.ttf", 40);
 
+# Events 
+obstacleTimer = pygame.USEREVENT + 1;
+pygame.time.set_timer(obstacleTimer, 1500);
+
 
 # SURFACES
 skySurface = pygame.image.load("Assets/Graphics/Sky.png").convert();
@@ -41,10 +66,10 @@ gravity = 0;
 jumpForce = -20;
 canJump = True;
 
-# Enemy
+# Obstacles
 snailSurf = pygame.image.load("Assets/Graphics/snail/snail1.png").convert_alpha()
-snailRect = snailSurf.get_rect(midbottom = (750, 300))
-snailPosX = 700
+flySurf = pygame.image.load("Assets/Graphics/Fly/fly1.png").convert_alpha();
+obstaclesRectList = []
 
 # Intro Screen
 titleBg = pygame.image.load("Assets/Graphics/TitleBG.png").convert();
@@ -67,7 +92,7 @@ while True:
             exit(); # this is just a more acurate way of put a break here
         if(gameActive == False):
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r:
+                if event.key == pygame.K_SPACE:
                     gameActive = True;
                     print(f"gameActive: {gameActive}");
         else:  
@@ -78,16 +103,26 @@ while True:
                     if(event.key == pygame.K_SPACE):
                         gravity = jumpForce;
             canJump = False;
+            if(event.type == obstacleTimer):
+                obstacleType = randint(0,2);
+                surf = "";
+                yPos = 0;
+
+                if(obstacleType == 0):
+                    surf = snailSurf;
+                    yPos = 300;
+                else:
+                    surf = flySurf;
+                    yPos = 210;
+                obstaclesRectList.append(surf.get_rect(bottomright = (randint(900, 1100), yPos)));
     
     if(gameActive):
         screen.blit(skySurface, (0,0));
         screen.blit(groundSurface, (0,300));
         score = DisplayScore(startTime);
 
-        snailSpeed = 7;
-        snailRect.left -= snailSpeed;
-        if (snailRect.left <= -100): snailRect.left = 750;
-        screen.blit(snailSurf, snailRect);
+        # Obstacle
+        obstaclesRectList = MoveObstacles(obstaclesRectList)
 
         # Player
         gravity += 1;
@@ -100,19 +135,16 @@ while True:
         screen.blit(playerSurf, playerRect);
 
         # Collision
-        if(playerRect.colliderect(snailRect)):
-            gameActive = False;
-            # print("TEste")
-
+        gameActive = HandleCollision(playerRect, obstaclesRectList);
     else:
         screen.blit(titleBg, (0,0));
         screen.blit(titleText, titleRect);
+        obstaclesRectList.clear();
 
         if(score == 0):
             screen.blit(startText, startRect);
         else:
             screen.blit(scoreText, startRect);
-        snailRect.left = 750;
         startTime = pygame.time.get_ticks();
 
     # Draw all elements
