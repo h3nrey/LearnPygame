@@ -8,6 +8,7 @@ def DisplayScore(startTime):
     scoreText = font.render(f"{displayTime}", False, "#ffaaaa");
     scoreRect = scoreText.get_rect(center = (400, 50));
     screen.blit(scoreText, scoreRect);
+    return displayTime;
 
 pygame.init(); # initialize pygame
 
@@ -22,8 +23,9 @@ clock = pygame.time.Clock();
 FPS = 60;
 
 # Game states
-gameActive = True;
+gameActive = False;
 startTime = 0;
+score = 0;
 
 # FONTS
 textFont = pygame.font.Font("font/Pixeltype.ttf", 40);
@@ -38,11 +40,22 @@ playerRect = playerSurf.get_rect(midbottom = (50, 300));
 gravity = 0;
 jumpForce = -20;
 canJump = True;
- 
+
+# Enemy
 snailSurf = pygame.image.load("Assets/Graphics/snail/snail1.png").convert_alpha()
 snailRect = snailSurf.get_rect(midbottom = (750, 300))
 snailPosX = 700
 
+# Intro Screen
+titleBg = pygame.image.load("Assets/Graphics/TitleBG.png").convert();
+titleFont = pygame.font.Font("font/Pixeltype.ttf", 60);
+titleText = titleFont.render("Python runner", False, "#dddddd");
+titleRect = titleText.get_rect(center = (400, 70))
+
+startFont = pygame.font.Font("font/Pixeltype.ttf", 40);
+startText = startFont.render("Press SPACE to start", "False", "#ccccff");
+startRect = startText.get_rect(center = (400, 300));
+scoreText = startFont.render(f"Score: {score}", False, "#ccccff");
 
 line = pygame.Surface((10,10))
 
@@ -69,7 +82,7 @@ while True:
     if(gameActive):
         screen.blit(skySurface, (0,0));
         screen.blit(groundSurface, (0,300));
-        DisplayScore(startTime);
+        score = DisplayScore(startTime);
 
         snailSpeed = 7;
         snailRect.left -= snailSpeed;
@@ -92,10 +105,15 @@ while True:
             # print("TEste")
 
     else:
-        screen.fill("Black")
+        screen.blit(titleBg, (0,0));
+        screen.blit(titleText, titleRect);
+
+        if(score == 0):
+            screen.blit(startText, startRect);
+        else:
+            screen.blit(scoreText, startRect);
         snailRect.left = 750;
         startTime = pygame.time.get_ticks();
-        print("Game finished")
 
     # Draw all elements
     pygame.display.update();
