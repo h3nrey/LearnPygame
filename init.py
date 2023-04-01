@@ -12,6 +12,9 @@ pygame.display.set_caption("Super runner cool"); #Defing a title for the game sc
 clock = pygame.time.Clock();
 FPS = 60;
 
+# Game states
+gameActive = True;
+
 # FONTS
 textFont = pygame.font.Font("font/Pixeltype.ttf", 40);
 
@@ -33,44 +36,62 @@ snailRect = snailSurf.get_rect(midbottom = (750, 300))
 snailPosX = 700
 
 line = pygame.Surface((10,10))
+
 # Game Loop
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit();
             exit(); # this is just a more acurate way of put a break here
-        
-        if(canJump): 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                gravity = jumpForce;
+        if(gameActive == False):
             if event.type == pygame.KEYDOWN:
-                if(event.key == pygame.K_SPACE):
+                if event.key == pygame.K_r:
+                    gameActive = True;
+                    print(f"gameActive: {gameActive}");
+        else:  
+            if(canJump): 
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     gravity = jumpForce;
-        canJump = False;
+                if event.type == pygame.KEYDOWN:
+                    if(event.key == pygame.K_SPACE):
+                        gravity = jumpForce;
+            canJump = False;
     
-    screen.blit(skySurface, (0,0));
-    screen.blit(groundSurface, (0,300));
-    pygame.draw.rect(screen, "#aaa1ed", scoreRect)
-    pygame.draw.rect(screen, "#aaa1ed", scoreRect, 10)
-    screen.blit(scoreText, scoreRect);
-    
+    if(gameActive):
+        screen.blit(skySurface, (0,0));
+        screen.blit(groundSurface, (0,300));
+        pygame.draw.rect(screen, "#aaa1ed", scoreRect)
+        pygame.draw.rect(screen, "#aaa1ed", scoreRect, 10)
+        screen.blit(scoreText, scoreRect);
+        
 
-    snailSpeed = 7;
-    snailRect.left -= snailSpeed;
-    if (snailRect.left <= -100): snailRect.left = 750;
-    screen.blit(snailSurf, snailRect);
+        snailSpeed = 7;
+        snailRect.left -= snailSpeed;
+        if (snailRect.left <= -100): snailRect.left = 750;
+        screen.blit(snailSurf, snailRect);
 
-    # Player
-    gravity += 1;
-    playerRect.y += gravity;
+        # Player
+        gravity += 1;
+        playerRect.y += gravity;
 
-    if(playerRect.bottom >= 300): 
-        canJump = True;
-        playerRect.bottom = 300;
-    
-    screen.blit(playerSurf, playerRect);
+        if(playerRect.bottom >= 300): 
+            canJump = True;
+            playerRect.bottom = 300;
+        
+        screen.blit(playerSurf, playerRect);
+
+        # Collision
+        if(playerRect.colliderect(snailRect)):
+            gameActive = False;
+            # print("TEste")
+
+    else:
+        screen.fill("Black")
+        snailRect.left = 750;
+        print("Game finished")
 
     # Draw all elements
     pygame.display.update();
     # update everything
     clock.tick(FPS);
+
